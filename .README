@@ -1,0 +1,40 @@
+# Ecommerce Backend – Node.js + Express + MongoDB
+
+Ecommerce desarrollado con **Node.js**, **Express** y **MongoDB (Driver Nativo)**.  
+Incluye autenticación con **JWT**, manejo de roles (ADMIN / CLIENTE), gestión de productos, categorías, carrito de compras y pedidos.
+
+El proyecto sigue una arquitectura modular clara, separando controladores, servicios, rutas, validaciones y acceso a datos.
+
+---
+
+## Características principales
+
+- **Autenticación JWT**
+- **Autorización por roles** (ADMIN / CLIENTE)
+- **CRUD de productos** con paginación, filtros y búsqueda
+- **CRUD de categorías**
+- **Carrito de compras**
+- **Sistema de pedidos**
+- **Validaciones con Joi**
+- **MongoDB Driver nativo (sin Mongoose)**
+- **Middlewares personalizados**
+- **Arquitectura modulada**
+
+---
+
+## Tecnologías utilizadas
+
+- Node.js
+- Express
+- MongoDB Native Driver
+- JSON Web Tokens (JWT)
+- Joi (validación)
+- Dotenv
+- Nodemon (desarrollo)
+
+---
+
+## .env
+- PORT=4000
+- JWT_SECRET=un_secreto_super_fuerte
+- MONGO_URI= ''
