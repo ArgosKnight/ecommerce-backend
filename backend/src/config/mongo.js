@@ -9,7 +9,6 @@ async function connectDB() {
 
     db = client.db("ecommerce");
     console.log("✅ MongoDB conectado");
-    console.log("📊 Base de datos en uso:", db.databaseName);
 
     return db;
   } catch (error) {

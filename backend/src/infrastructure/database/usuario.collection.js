@@ -24,10 +24,7 @@ async function crearUsuario(data) {
 // Buscar usuario por email (para login)
 async function buscarPorEmail(email) {
   const col = usuarioCollection();
-  console.log('🔍 Buscando usuario con email:', email);
-  const usuario = await col.findOne({ email });
-  console.log('📦 Usuario encontrado:', usuario ? `Sí (${usuario.email})` : 'No');
-  return usuario;
+  return await col.findOne({ email });
 }
 
 module.exports = {
