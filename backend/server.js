@@ -9,14 +9,12 @@ const apiRoutes = require("./src/application/routes/index.routes");
 const app = express();
 
 // Configurar CORS para desarrollo y producción
-const cors = require('cors');
-
 app.use(cors({
   origin: [
     'http://localhost:3000',
     'https://ecommerce-frontend-kappa.vercel.app',
     'https://ecommerce-frontend-jesus-code2024s-projects.vercel.app',
-     'https://ecommerce-frontend-eight-opal.vercel.app/'
+    'https://ecommerce-frontend-eight-opal.vercel.app'
   ],
   credentials: true
 }));
