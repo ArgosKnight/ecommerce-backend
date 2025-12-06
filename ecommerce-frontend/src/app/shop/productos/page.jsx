@@ -26,7 +26,6 @@ export default function ProductosPage() {
       const productosArray = Array.isArray(data) ? data : (data.data || data.productos || []);
       setProductos(productosArray);
     } catch (error) {
-      console.error('Error al cargar productos:', error);
       setProductos([]);
     } finally {
       setLoading(false);
@@ -40,7 +39,6 @@ export default function ProductosPage() {
       const categoriasArray = Array.isArray(data) ? data : (data.categorias || []);
       setCategorias(categoriasArray);
     } catch (error) {
-      console.error('Error al cargar categorías:', error);
       setCategorias([]);
     }
   };

@@ -26,7 +26,6 @@ export default function ProductoDetallePage() {
       const { data } = await api.get(`/productos/${params.id}`);
       setProducto(data);
     } catch (error) {
-      console.error('Error al cargar producto:', error);
       alert('Producto no encontrado');
       router.push('/shop/productos');
     } finally {

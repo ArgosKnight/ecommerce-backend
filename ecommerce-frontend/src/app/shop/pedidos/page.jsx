@@ -31,7 +31,7 @@ export default function MisPedidosPage() {
       const { data } = await api.get('/pedidos/mios');
       setPedidos(data);
     } catch (error) {
-      console.error('Error al cargar pedidos:', error);
+      setPedidos([]);
     } finally {
       setLoading(false);
     }

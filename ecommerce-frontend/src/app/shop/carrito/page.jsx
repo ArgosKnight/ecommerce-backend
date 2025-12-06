@@ -73,7 +73,6 @@ export default function CarritoPage() {
       alert('¡Pedido creado exitosamente!');
       router.push('/shop/pedidos');
     } catch (error) {
-      console.error('Error al crear pedido:', error);
       alert(error.response?.data?.mensaje || 'Error al crear el pedido');
     } finally {
       setLoading(false);

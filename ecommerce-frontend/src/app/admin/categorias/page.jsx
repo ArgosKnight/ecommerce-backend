@@ -13,6 +13,7 @@ export default function AdminCategoriasPage() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editando, setEditando] = useState(null);
+  const [notification, setNotification] = useState({ show: false, message: '', type: '' });
 
   const [formData, setFormData] = useState({
     nombre: '',
@@ -30,7 +31,6 @@ export default function AdminCategoriasPage() {
       const categoriasArray = Array.isArray(data) ? data : (data.categorias || []);
       setCategorias(categoriasArray);
     } catch (error) {
-      console.error('Error al cargar categorías:', error);
       setCategorias([]);
     } finally {
       setLoading(false);
@@ -42,18 +42,21 @@ export default function AdminCategoriasPage() {
     try {
       if (editando) {
         await api.put(`/categorias/${editando}`, formData);
-        alert('Categoría actualizada');
+        setNotification({ show: true, message: 'Categoría actualizada exitosamente', type: 'success' });
       } else {
         await api.post('/categorias', formData);
-        alert('Categoría creada');
+        setNotification({ show: true, message: 'Categoría creada exitosamente', type: 'success' });
       }
 
       setShowModal(false);
       setEditando(null);
       resetForm();
       cargarCategorias();
+      setTimeout(() => setNotification({ show: false, message: '', type: '' }), 3000);
     } catch (error) {
-      alert(error.response?.data?.error || error.response?.data?.mensaje || 'Error al guardar categoría');
+      const mensaje = error.response?.data?.error || error.response?.data?.mensaje || 'Error al guardar categoría';
+      setNotification({ show: true, message: mensaje, type: 'error' });
+      setTimeout(() => setNotification({ show: false, message: '', type: '' }), 3000);
     }
   };
 
@@ -73,11 +76,13 @@ export default function AdminCategoriasPage() {
     
     try {
       await api.delete(`/categorias/${id}`);
-      alert('Categoría eliminada');
+      setNotification({ show: true, message: 'Categoría eliminada exitosamente', type: 'success' });
       cargarCategorias();
+      setTimeout(() => setNotification({ show: false, message: '', type: '' }), 3000);
     } catch (error) {
-      console.error('Error al eliminar:', error.response?.data);
-      alert(error.response?.data?.error || 'Error al eliminar categoría');
+      const mensaje = error.response?.data?.error || 'Error al eliminar categoría';
+      setNotification({ show: true, message: mensaje, type: 'error' });
+      setTimeout(() => setNotification({ show: false, message: '', type: '' }), 3000);
     }
   };
 
@@ -112,6 +117,25 @@ export default function AdminCategoriasPage() {
   return (
     <>
       <Navbar />
+      
+      {/* Notificación Toast */}
+      {notification.show && (
+        <div className="fixed top-4 right-4 z-50 animate-fade-in-down">
+          <div className={`px-6 py-4 rounded-lg shadow-lg ${
+            notification.type === 'success' 
+              ? 'bg-green-500 text-white' 
+              : 'bg-red-500 text-white'
+          }`}>
+            <div className="flex items-center gap-2">
+              <span className="text-xl">
+                {notification.type === 'success' ? '✅' : '❌'}
+              </span>
+              <span className="font-medium">{notification.message}</span>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="min-h-screen bg-gray-50 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-8">
@@ -205,7 +229,7 @@ export default function AdminCategoriasPage() {
                       onChange={(e) =>
                         setFormData({ ...formData, nombre: e.target.value })
                       }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
                       placeholder="Ej: Electrónica"
                     />
                   </div>

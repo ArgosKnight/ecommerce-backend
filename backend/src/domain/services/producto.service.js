@@ -54,9 +54,6 @@ class ProductoService {
     const skip = (page - 1) * limit;
 
     const col = getDB().collection("productos");
-    
-    console.log('🟢 [LISTAR PRODUCTOS] Base de datos:', col.dbName);
-    console.log('🟢 [LISTAR PRODUCTOS] Colección:', col.collectionName);
 
     const filters = {};
 
@@ -87,18 +84,10 @@ class ProductoService {
       ];
     }
 
-    console.log('🟢 [LISTAR PRODUCTOS] Filtros aplicados:', filters);
-
     const [data, total] = await Promise.all([
       col.find(filters).skip(skip).limit(limit).toArray(),
       col.countDocuments(filters)
     ]);
-
-    console.log('🟢 [LISTAR PRODUCTOS] Total encontrados:', total);
-    console.log('🟢 [LISTAR PRODUCTOS] Productos en esta página:', data.length);
-    if (data.length > 0) {
-      console.log('🟢 [LISTAR PRODUCTOS] Primer producto:', data[0]);
-    }
 
     return {
       page,

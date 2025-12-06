@@ -14,6 +14,7 @@ export default function AdminProductosPage() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editando, setEditando] = useState(null);
+  const [notification, setNotification] = useState({ show: false, message: '', type: '' });
 
   const [formData, setFormData] = useState({
     nombre: '',
@@ -38,7 +39,6 @@ export default function AdminProductosPage() {
       const productosArray = Array.isArray(data) ? data : (data.data || data.productos || []);
       setProductos(productosArray);
     } catch (error) {
-      console.error('Error al cargar productos:', error);
       setProductos([]);
     } finally {
       setLoading(false);
@@ -52,7 +52,6 @@ export default function AdminProductosPage() {
       // ...existing code...
       setCategorias(categoriasArray);
     } catch (error) {
-      console.error('Error al cargar categorías:', error);
       setCategorias([]);
     }
   };
@@ -62,7 +61,8 @@ export default function AdminProductosPage() {
     try {
       // Validar que se haya seleccionado una categoría
       if (!formData.categoriaId) {
-        alert('Debes seleccionar una categoría');
+        setNotification({ show: true, message: 'Debes seleccionar una categoría', type: 'error' });
+        setTimeout(() => setNotification({ show: false, message: '', type: '' }), 3000);
         return;
       }
 
@@ -79,22 +79,21 @@ export default function AdminProductosPage() {
 
       if (editando) {
         await api.put(`/productos/${editando}`, dataToSend);
-        alert('Producto actualizado');
+        setNotification({ show: true, message: 'Producto actualizado exitosamente', type: 'success' });
       } else {
         await api.post('/productos', dataToSend);
-        alert('Producto creado');
+        setNotification({ show: true, message: 'Producto creado exitosamente', type: 'success' });
       }
 
       setShowModal(false);
       setEditando(null);
       resetForm();
       cargarProductos();
+      setTimeout(() => setNotification({ show: false, message: '', type: '' }), 3000);
     } catch (error) {
-      console.error('Error completo:', error);
-      console.error('Error response:', error.response);
-      console.error('Error data:', error.response?.data);
       const mensajeError = error.response?.data?.error || error.response?.data?.mensaje || error.message || 'Error al guardar producto';
-      alert(mensajeError);
+      setNotification({ show: true, message: mensajeError, type: 'error' });
+      setTimeout(() => setNotification({ show: false, message: '', type: '' }), 3000);
     }
   };
 
@@ -114,9 +113,12 @@ export default function AdminProductosPage() {
   const handleCambiarEstado = async (id, activo) => {
     try {
       await api.patch(`/productos/${id}/estado`, { activo: !activo });
+      setNotification({ show: true, message: 'Estado actualizado', type: 'success' });
       cargarProductos();
+      setTimeout(() => setNotification({ show: false, message: '', type: '' }), 3000);
     } catch (error) {
-      alert('Error al cambiar estado');
+      setNotification({ show: true, message: 'Error al cambiar estado', type: 'error' });
+      setTimeout(() => setNotification({ show: false, message: '', type: '' }), 3000);
     }
   };
 
@@ -156,6 +158,25 @@ export default function AdminProductosPage() {
   return (
     <>
       <Navbar />
+      
+      {/* Notificación Toast */}
+      {notification.show && (
+        <div className="fixed top-4 right-4 z-50 animate-fade-in-down">
+          <div className={`px-6 py-4 rounded-lg shadow-lg ${
+            notification.type === 'success' 
+              ? 'bg-green-500 text-white' 
+              : 'bg-red-500 text-white'
+          }`}>
+            <div className="flex items-center gap-2">
+              <span className="text-xl">
+                {notification.type === 'success' ? '✅' : '❌'}
+              </span>
+              <span className="font-medium">{notification.message}</span>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="min-h-screen bg-gray-50 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-8">
@@ -280,7 +301,8 @@ export default function AdminProductosPage() {
                       onChange={(e) =>
                         setFormData({ ...formData, nombre: e.target.value })
                       }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                      placeholder="Ej: Laptop HP"
                     />
                   </div>
 
@@ -298,7 +320,8 @@ export default function AdminProductosPage() {
                         })
                       }
                       rows="3"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                      placeholder="Describe el producto..."
                     />
                   </div>
 
@@ -315,7 +338,8 @@ export default function AdminProductosPage() {
                         onChange={(e) =>
                           setFormData({ ...formData, precio: e.target.value })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                        placeholder="0.00"
                       />
                     </div>
 
@@ -330,7 +354,8 @@ export default function AdminProductosPage() {
                         onChange={(e) =>
                           setFormData({ ...formData, stock: e.target.value })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                        placeholder="0"
                       />
                     </div>
                   </div>
@@ -348,7 +373,7 @@ export default function AdminProductosPage() {
                           categoriaId: e.target.value,
                         })
                       }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
                     >
                       <option value="">Seleccionar categoría</option>
                       {categorias.map((cat) => (

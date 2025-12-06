@@ -27,12 +27,12 @@ export default function Home() {
             <h1 className="text-6xl md:text-7xl font-extrabold text-white mb-8 leading-tight">
               Descubre productos
               <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-purple-200">
+              <span className="text-white drop-shadow-2xl">
                 increíbles
               </span>
             </h1>
             
-            <p className="text-xl md:text-2xl text-blue-100 mb-12 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl md:text-2xl text-white mb-12 max-w-3xl mx-auto leading-relaxed font-medium drop-shadow-lg">
               La mejor selección de productos con precios inigualables. 
               Compra de forma fácil, rápida y segura.
             </p>
@@ -72,10 +72,10 @@ export default function Home() {
               { icon: '📦', number: '24h', label: 'Envío Express' },
               { icon: '🔒', number: '100%', label: 'Seguro' },
             ].map((stat, index) => (
-              <div key={index} className="text-center transform hover:scale-110 transition-transform">
+              <div key={index} className="text-center transform hover:scale-110 transition-transform bg-white bg-opacity-90 rounded-xl p-4 shadow-lg">
                 <div className="text-4xl mb-2">{stat.icon}</div>
-                <div className="text-3xl font-bold text-white mb-1">{stat.number}</div>
-                <div className="text-blue-200 text-sm font-medium">{stat.label}</div>
+                <div className="text-3xl font-bold text-gray-900 mb-1">{stat.number}</div>
+                <div className="text-gray-800 text-sm font-semibold">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -148,7 +148,7 @@ export default function Home() {
           <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-6">
             ¿Listo para comenzar?
           </h2>
-          <p className="text-xl text-blue-100 mb-10">
+          <p className="text-xl text-white font-medium mb-10">
             Únete a miles de clientes satisfechos y descubre ofertas exclusivas
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
