@@ -19,7 +19,7 @@ export default function Home() {
           {/* Contenido Hero */}
           <div className="text-center mb-20">
             <div className="inline-block mb-6">
-              <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-white bg-opacity-20 text-white backdrop-blur-sm">
+              <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-yellow-400 text-gray-900 shadow-lg">
                 ✨ Bienvenido a tu tienda online favorita
               </span>
             </div>
@@ -27,12 +27,12 @@ export default function Home() {
             <h1 className="text-6xl md:text-7xl font-extrabold text-white mb-8 leading-tight">
               Descubre productos
               <br />
-              <span className="text-white drop-shadow-2xl">
+              <span className="bg-gradient-to-r from-yellow-300 via-yellow-200 to-yellow-100 bg-clip-text text-transparent drop-shadow-2xl">
                 increíbles
               </span>
             </h1>
             
-            <p className="text-xl md:text-2xl text-white mb-12 max-w-3xl mx-auto leading-relaxed font-medium drop-shadow-lg">
+            <p className="text-xl md:text-2xl text-blue-50 mb-12 max-w-3xl mx-auto leading-relaxed font-medium drop-shadow-lg">
               La mejor selección de productos con precios inigualables. 
               Compra de forma fácil, rápida y segura.
             </p>
@@ -52,7 +52,7 @@ export default function Home() {
               
               <Link
                 href="/auth/register"
-                className="group inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white bg-white bg-opacity-10 backdrop-blur-sm border-2 border-white rounded-xl hover:bg-white hover:text-blue-900 transition-all duration-300 transform hover:scale-105"
+                className="group inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-blue-900 bg-yellow-400 border-2 border-yellow-500 rounded-xl hover:bg-yellow-500 hover:border-yellow-600 transition-all duration-300 transform hover:scale-105 shadow-lg"
               >
                 <span className="flex items-center gap-2">
                   🎉 Crear Cuenta
@@ -72,10 +72,10 @@ export default function Home() {
               { icon: '📦', number: '24h', label: 'Envío Express' },
               { icon: '🔒', number: '100%', label: 'Seguro' },
             ].map((stat, index) => (
-              <div key={index} className="text-center transform hover:scale-110 transition-transform bg-white bg-opacity-90 rounded-xl p-4 shadow-lg">
+              <div key={index} className="text-center transform hover:scale-110 transition-transform bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl p-4 shadow-lg">
                 <div className="text-4xl mb-2">{stat.icon}</div>
-                <div className="text-3xl font-bold text-gray-900 mb-1">{stat.number}</div>
-                <div className="text-gray-800 text-sm font-semibold">{stat.label}</div>
+                <div className="text-3xl font-bold text-white mb-1">{stat.number}</div>
+                <div className="text-blue-100 text-sm font-semibold">{stat.label}</div>
               </div>
             ))}
           </div>

@@ -16,6 +16,7 @@ export default function CarritoPage() {
   const [loading, setLoading] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('tarjeta');
+  const [notification, setNotification] = useState({ show: false, message: '', type: '' });
   const [paymentData, setPaymentData] = useState({
     numeroTarjeta: '',
     nombreTitular: '',
@@ -57,12 +58,14 @@ export default function CarritoPage() {
 
   const handleCrearPedido = async () => {
     if (items.length === 0) {
-      alert('El carrito está vacío');
+      setNotification({ show: true, message: 'El carrito está vacío', type: 'error' });
+      setTimeout(() => setNotification({ show: false, message: '', type: '' }), 3000);
       return;
     }
 
     if (!direccion.direccion || !direccion.ciudad || !direccion.codigoPostal || !direccion.telefono) {
-      alert('Por favor completa todos los campos de la dirección de envío');
+      setNotification({ show: true, message: 'Por favor completa todos los campos de la dirección de envío', type: 'error' });
+      setTimeout(() => setNotification({ show: false, message: '', type: '' }), 3000);
       return;
     }
 
@@ -74,13 +77,15 @@ export default function CarritoPage() {
     // Validar datos de pago
     if (paymentMethod === 'tarjeta') {
       if (!paymentData.numeroTarjeta || !paymentData.nombreTitular || !paymentData.fechaVencimiento || !paymentData.cvv) {
-        alert('Por favor completa todos los datos de la tarjeta');
+        setNotification({ show: true, message: 'Por favor completa todos los datos de la tarjeta', type: 'error' });
+        setTimeout(() => setNotification({ show: false, message: '', type: '' }), 3000);
         return;
       }
       
       // Validar formato de tarjeta
       if (paymentData.numeroTarjeta.replace(/\s/g, '').length !== 16) {
-        alert('Número de tarjeta inválido');
+        setNotification({ show: true, message: 'Número de tarjeta inválido', type: 'error' });
+        setTimeout(() => setNotification({ show: false, message: '', type: '' }), 3000);
         return;
       }
     }
@@ -102,10 +107,14 @@ export default function CarritoPage() {
       await api.post('/pedidos', pedidoData);
       clearCart();
       setShowPaymentModal(false);
-      alert('¡Pago procesado exitosamente! Pedido creado.');
-      router.push('/shop/pedidos');
+      setNotification({ show: true, message: '¡Pago procesado exitosamente! Pedido creado.', type: 'success' });
+      setTimeout(() => {
+        setNotification({ show: false, message: '', type: '' });
+        router.push('/shop/pedidos');
+      }, 2000);
     } catch (error) {
-      alert(error.response?.data?.error || error.response?.data?.mensaje || 'Error al crear el pedido');
+      setNotification({ show: true, message: error.response?.data?.error || error.response?.data?.mensaje || 'Error al crear el pedido', type: 'error' });
+      setTimeout(() => setNotification({ show: false, message: '', type: '' }), 3000);
     } finally {
       setLoading(false);
     }
@@ -152,6 +161,25 @@ export default function CarritoPage() {
   return (
     <>
       <Navbar />
+      
+      {/* Notificación Toast */}
+      {notification.show && (
+        <div className="fixed top-4 right-4 z-50 animate-fade-in-down">
+          <div className={`px-6 py-4 rounded-lg shadow-lg ${
+            notification.type === 'success' 
+              ? 'bg-green-500 text-white' 
+              : 'bg-red-500 text-white'
+          }`}>
+            <div className="flex items-center gap-2">
+              <span className="text-xl">
+                {notification.type === 'success' ? '✅' : '❌'}
+              </span>
+              <span className="font-medium">{notification.message}</span>
+            </div>
+          </div>
+        </div>
+      )}
+      
       <div className="min-h-screen bg-gray-50 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-8">

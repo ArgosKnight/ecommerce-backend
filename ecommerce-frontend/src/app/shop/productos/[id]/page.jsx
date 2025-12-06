@@ -16,6 +16,7 @@ export default function ProductoDetallePage() {
   const [producto, setProducto] = useState(null);
   const [cantidad, setCantidad] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [notification, setNotification] = useState({ show: false, message: '', type: '' });
 
   useEffect(() => {
     cargarProducto();
@@ -26,7 +27,6 @@ export default function ProductoDetallePage() {
       const { data } = await api.get(`/productos/${params.id}`);
       setProducto(data);
     } catch (error) {
-      alert('Producto no encontrado');
       router.push('/shop/productos');
     } finally {
       setLoading(false);
@@ -35,11 +35,13 @@ export default function ProductoDetallePage() {
 
   const handleAddToCart = () => {
     if (cantidad > producto.stock) {
-      alert('No hay suficiente stock');
+      setNotification({ show: true, message: 'No hay suficiente stock', type: 'error' });
+      setTimeout(() => setNotification({ show: false, message: '', type: '' }), 3000);
       return;
     }
     addItem(producto, cantidad);
-    alert('Producto agregado al carrito');
+    setNotification({ show: true, message: 'Producto agregado al carrito', type: 'success' });
+    setTimeout(() => setNotification({ show: false, message: '', type: '' }), 3000);
   };
 
   if (loading) {
@@ -58,6 +60,25 @@ export default function ProductoDetallePage() {
   return (
     <>
       <Navbar />
+      
+      {/* Notificación Toast */}
+      {notification.show && (
+        <div className="fixed top-4 right-4 z-50 animate-fade-in-down">
+          <div className={`px-6 py-4 rounded-lg shadow-lg ${
+            notification.type === 'success' 
+              ? 'bg-green-500 text-white' 
+              : 'bg-red-500 text-white'
+          }`}>
+            <div className="flex items-center gap-2">
+              <span className="text-xl">
+                {notification.type === 'success' ? '✅' : '❌'}
+              </span>
+              <span className="font-medium">{notification.message}</span>
+            </div>
+          </div>
+        </div>
+      )}
+      
       <div className="min-h-screen bg-gray-50 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <button
@@ -132,7 +153,7 @@ export default function ProductoDetallePage() {
                           onChange={(e) =>
                             setCantidad(parseInt(e.target.value) || 1)
                           }
-                          className="w-24 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                          className="w-24 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
                         />
                       </div>
 

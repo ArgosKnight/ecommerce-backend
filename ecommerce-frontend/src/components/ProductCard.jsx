@@ -11,7 +11,6 @@ export default function ProductCard({ producto }) {
 
   const handleAddToCart = () => {
     addItem(producto, 1);
-    alert('Producto agregado al carrito');
   };
 
   return (
