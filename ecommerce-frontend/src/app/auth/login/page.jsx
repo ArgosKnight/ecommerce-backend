@@ -26,7 +26,8 @@ export default function LoginPage() {
       login(data.token);
       router.push('/shop/productos');
     } catch (err) {
-      setError(err.response?.data?.mensaje || 'Error al iniciar sesión');
+      console.error('Error completo:', err.response?.data);
+      setError(err.response?.data?.error || err.response?.data?.mensaje || 'Error al iniciar sesión');
     } finally {
       setLoading(false);
     }

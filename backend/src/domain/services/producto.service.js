@@ -1,4 +1,4 @@
-const { crearProducto } = require("../../infrastructure/database/producto.collection");
+const { crearProducto, productoCollection } = require("../../infrastructure/database/producto.collection");
 const { getDB } = require("../../config/mongo");
 
 class ProductoService {
@@ -48,31 +48,15 @@ class ProductoService {
     return this.obtenerPorId(id);
   }
 
-  async obtenerPaginado(page = 1, limit = 10) {
-    const col = getDB().collection("productos");
-
-    const skip = (page - 1) * limit;
-
-    const [data, total] = await Promise.all([
-      col.find().skip(skip).limit(limit).toArray(),
-      col.countDocuments()
-    ]);
-
-    return {
-      page,
-      limit,
-      total,
-      totalPages: Math.ceil(total / limit),
-      data
-    };
-  }
-
   async obtenerPaginado(queryParams) {
     const page = parseInt(queryParams.page) || 1;
     const limit = parseInt(queryParams.limit) || 10;
     const skip = (page - 1) * limit;
 
     const col = getDB().collection("productos");
+    
+    console.log('🟢 [LISTAR PRODUCTOS] Base de datos:', col.dbName);
+    console.log('🟢 [LISTAR PRODUCTOS] Colección:', col.collectionName);
 
     const filters = {};
 
@@ -103,10 +87,18 @@ class ProductoService {
       ];
     }
 
+    console.log('🟢 [LISTAR PRODUCTOS] Filtros aplicados:', filters);
+
     const [data, total] = await Promise.all([
       col.find(filters).skip(skip).limit(limit).toArray(),
       col.countDocuments(filters)
     ]);
+
+    console.log('🟢 [LISTAR PRODUCTOS] Total encontrados:', total);
+    console.log('🟢 [LISTAR PRODUCTOS] Productos en esta página:', data.length);
+    if (data.length > 0) {
+      console.log('🟢 [LISTAR PRODUCTOS] Primer producto:', data[0]);
+    }
 
     return {
       page,

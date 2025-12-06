@@ -22,9 +22,14 @@ export default function ProductosPage() {
   const cargarProductos = async () => {
     try {
       const { data } = await api.get('/productos');
-      setProductos(data);
+      console.log('Respuesta productos:', data);
+      // La API devuelve un objeto con: { page, limit, total, totalPages, filters, data }
+      const productosArray = Array.isArray(data) ? data : (data.data || data.productos || []);
+      console.log('Productos extraídos:', productosArray);
+      setProductos(productosArray);
     } catch (error) {
       console.error('Error al cargar productos:', error);
+      setProductos([]);
     } finally {
       setLoading(false);
     }
@@ -33,9 +38,12 @@ export default function ProductosPage() {
   const cargarCategorias = async () => {
     try {
       const { data } = await api.get('/categorias');
-      setCategorias(data);
+      console.log('Respuesta categorías:', data);
+      const categoriasArray = Array.isArray(data) ? data : (data.categorias || []);
+      setCategorias(categoriasArray);
     } catch (error) {
       console.error('Error al cargar categorías:', error);
+      setCategorias([]);
     }
   };
 
@@ -88,7 +96,7 @@ export default function ProductosPage() {
                 >
                   <option value="">Todas las categorías</option>
                   {categorias.map((cat) => (
-                    <option key={cat.id} value={cat.id}>
+                    <option key={cat.id || cat._id} value={cat.id || cat._id}>
                       {cat.nombre}
                     </option>
                   ))}
@@ -108,8 +116,8 @@ export default function ProductosPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {productosFiltrados.map((producto) => (
-                <ProductCard key={producto.id} producto={producto} />
+              {productosFiltrados.map((producto, index) => (
+                <ProductCard key={producto.id || producto._id || index} producto={producto} />
               ))}
             </div>
           )}

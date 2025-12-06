@@ -16,13 +16,13 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-white shadow-md">
+    <nav className="bg-white shadow-lg border-b-2 border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           {/* Logo y navegación principal */}
           <div className="flex items-center">
-            <Link href="/" className="text-2xl font-bold text-blue-600">
-              E-Commerce
+            <Link href="/" className="text-2xl font-bold text-blue-600 hover:text-blue-700">
+              🛒 E-Commerce
             </Link>
             <div className="ml-10 flex space-x-4">
               <Link
@@ -30,22 +30,34 @@ export default function Navbar() {
                 className={`px-3 py-2 rounded-md text-sm font-medium ${
                   pathname === '/shop/productos'
                     ? 'bg-blue-100 text-blue-700'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    : 'text-gray-900 hover:bg-gray-100'
                 }`}
               >
                 Productos
               </Link>
               {user?.rol === 'ADMIN' && (
-                <Link
-                  href="/admin/productos"
-                  className={`px-3 py-2 rounded-md text-sm font-medium ${
-                    pathname.startsWith('/admin')
-                      ? 'bg-purple-100 text-purple-700'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  Admin
-                </Link>
+                <>
+                  <Link
+                    href="/admin/productos"
+                    className={`px-3 py-2 rounded-md text-sm font-medium ${
+                      pathname === '/admin/productos'
+                        ? 'bg-purple-100 text-purple-700'
+                        : 'text-gray-900 hover:bg-gray-100'
+                    }`}
+                  >
+                    Admin Productos
+                  </Link>
+                  <Link
+                    href="/admin/categorias"
+                    className={`px-3 py-2 rounded-md text-sm font-medium ${
+                      pathname === '/admin/categorias'
+                        ? 'bg-purple-100 text-purple-700'
+                        : 'text-gray-900 hover:bg-gray-100'
+                    }`}
+                  >
+                    Admin Categorías
+                  </Link>
+                </>
               )}
             </div>
           </div>
@@ -58,7 +70,7 @@ export default function Navbar() {
                   <>
                     <Link
                       href="/shop/carrito"
-                      className="relative text-gray-700 hover:text-blue-600"
+                      className="relative text-gray-900 hover:text-blue-600"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -75,21 +87,21 @@ export default function Navbar() {
                         />
                       </svg>
                       {getItemCount() > 0 && (
-                        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
                           {getItemCount()}
                         </span>
                       )}
                     </Link>
                     <Link
                       href="/shop/pedidos"
-                      className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100"
+                      className="px-3 py-2 rounded-md text-sm font-medium text-gray-900 hover:bg-gray-100"
                     >
                       Mis Pedidos
                     </Link>
                   </>
                 )}
-                <span className="text-sm text-gray-700">
-                  Hola, <span className="font-semibold">{user?.nombre}</span>
+                <span className="text-sm text-gray-900 font-medium">
+                  Hola, <span className="font-bold text-blue-600">{user?.nombre}</span>
                 </span>
                 <button
                   onClick={handleLogout}
@@ -102,13 +114,13 @@ export default function Navbar() {
               <>
                 <Link
                   href="/auth/login"
-                  className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600"
+                  className="px-4 py-2 text-sm font-medium text-gray-900 hover:text-blue-600 hover:bg-gray-100 rounded-md"
                 >
                   Iniciar Sesión
                 </Link>
                 <Link
                   href="/auth/register"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-medium"
                 >
                   Registrarse
                 </Link>

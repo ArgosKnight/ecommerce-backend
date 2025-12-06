@@ -12,6 +12,7 @@ const router = express.Router();
 // 📌 RUTAS PÚBLICAS
 // ----------------------------------------
 router.get("/", (req, res) => CategoriaController.listar(req, res));
+router.get("/:id", (req, res) => CategoriaController.obtenerPorId(req, res));
 
 // ----------------------------------------
 // 📌 RUTAS ADMIN + VALIDACIÓN
@@ -22,6 +23,21 @@ router.post(
   role("ADMIN"),
   validate(categoriaSchema),
   (req, res) => CategoriaController.crear(req, res)
+);
+
+router.put(
+  "/:id",
+  auth,
+  role("ADMIN"),
+  validate(categoriaSchema),
+  (req, res) => CategoriaController.actualizar(req, res)
+);
+
+router.delete(
+  "/:id",
+  auth,
+  role("ADMIN"),
+  (req, res) => CategoriaController.eliminar(req, res)
 );
 
 module.exports = router;

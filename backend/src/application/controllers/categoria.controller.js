@@ -18,6 +18,36 @@ class CategoriaController {
       res.status(500).json({ error: error.message });
     }
   }
+
+  async obtenerPorId(req, res) {
+    try {
+      const { id } = req.params;
+      const categoria = await CategoriaService.obtenerPorId(id);
+      res.json(categoria);
+    } catch (error) {
+      res.status(404).json({ error: error.message });
+    }
+  }
+
+  async actualizar(req, res) {
+    try {
+      const { id } = req.params;
+      const categoria = await CategoriaService.actualizar(id, req.body);
+      res.json(categoria);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  async eliminar(req, res) {
+    try {
+      const { id } = req.params;
+      const resultado = await CategoriaService.eliminar(id);
+      res.json(resultado);
+    } catch (error) {
+      res.status(404).json({ error: error.message });
+    }
+  }
 }
 
 module.exports = new CategoriaController();

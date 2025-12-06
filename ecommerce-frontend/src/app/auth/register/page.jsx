@@ -28,7 +28,8 @@ export default function RegisterPage() {
       login(data.token);
       router.push('/shop/productos');
     } catch (err) {
-      setError(err.response?.data?.mensaje || 'Error al registrarse');
+      console.error('Error completo:', err.response?.data);
+      setError(err.response?.data?.error || err.response?.data?.mensaje || 'Error al registrarse');
     } finally {
       setLoading(false);
     }

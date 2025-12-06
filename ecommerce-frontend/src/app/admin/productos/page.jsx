@@ -22,7 +22,6 @@ export default function AdminProductosPage() {
     stock: '',
     categoriaId: '',
     imagenes: [],
-    activo: true,
   });
 
   useEffect(() => {
@@ -35,9 +34,14 @@ export default function AdminProductosPage() {
   const cargarProductos = async () => {
     try {
       const { data } = await api.get('/productos');
-      setProductos(data);
+      console.log('Respuesta productos admin:', data);
+      // La API devuelve un objeto con: { page, limit, total, totalPages, filters, data }
+      const productosArray = Array.isArray(data) ? data : (data.data || data.productos || []);
+      console.log('Productos extraídos:', productosArray);
+      setProductos(productosArray);
     } catch (error) {
       console.error('Error al cargar productos:', error);
+      setProductos([]);
     } finally {
       setLoading(false);
     }
@@ -46,20 +50,36 @@ export default function AdminProductosPage() {
   const cargarCategorias = async () => {
     try {
       const { data } = await api.get('/categorias');
-      setCategorias(data);
+      const categoriasArray = Array.isArray(data) ? data : (data.categorias || []);
+      console.log('Categorías cargadas:', categoriasArray);
+      setCategorias(categoriasArray);
     } catch (error) {
       console.error('Error al cargar categorías:', error);
+      setCategorias([]);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Validar que se haya seleccionado una categoría
+      if (!formData.categoriaId) {
+        alert('Debes seleccionar una categoría');
+        return;
+      }
+
       const dataToSend = {
-        ...formData,
+        nombre: formData.nombre,
+        descripcion: formData.descripcion,
         precio: parseFloat(formData.precio),
         stock: parseInt(formData.stock),
+        categoriaId: formData.categoriaId,
+        imagenes: formData.imagenes,
       };
+
+      console.log('Datos a enviar:', dataToSend);
+      console.log('CategoriaId:', formData.categoriaId);
+      console.log('FormData completo:', formData);
 
       if (editando) {
         await api.put(`/productos/${editando}`, dataToSend);
@@ -74,7 +94,11 @@ export default function AdminProductosPage() {
       resetForm();
       cargarProductos();
     } catch (error) {
-      alert(error.response?.data?.mensaje || 'Error al guardar producto');
+      console.error('Error completo:', error);
+      console.error('Error response:', error.response);
+      console.error('Error data:', error.response?.data);
+      const mensajeError = error.response?.data?.error || error.response?.data?.mensaje || error.message || 'Error al guardar producto';
+      alert(mensajeError);
     }
   };
 
@@ -87,7 +111,6 @@ export default function AdminProductosPage() {
       stock: producto.stock.toString(),
       categoriaId: producto.categoriaId || '',
       imagenes: producto.imagenes || [],
-      activo: producto.activo,
     });
     setShowModal(true);
   };
@@ -109,7 +132,6 @@ export default function AdminProductosPage() {
       stock: '',
       categoriaId: '',
       imagenes: [],
-      activo: true,
     });
   };
 
@@ -144,16 +166,24 @@ export default function AdminProductosPage() {
             <h1 className="text-3xl font-bold text-gray-900">
               Gestión de Productos
             </h1>
-            <button
-              onClick={() => {
-                resetForm();
-                setEditando(null);
-                setShowModal(true);
-              }}
-              className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
-            >
-              + Nuevo Producto
-            </button>
+            <div className="flex gap-4">
+              <button
+                onClick={() => router.push('/admin/categorias')}
+                className="bg-gray-600 text-white px-6 py-2 rounded-md hover:bg-gray-700"
+              >
+                Ver Categorías
+              </button>
+              <button
+                onClick={() => {
+                  resetForm();
+                  setEditando(null);
+                  setShowModal(true);
+                }}
+                className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
+              >
+                + Nuevo Producto
+              </button>
+            </div>
           </div>
 
           {loading ? (
@@ -183,8 +213,8 @@ export default function AdminProductosPage() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {productos.map((producto) => (
-                    <tr key={producto.id}>
+                  {productos.map((producto, index) => (
+                    <tr key={producto.id || producto._id || index}>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">
                           {producto.nombre}
@@ -311,9 +341,10 @@ export default function AdminProductosPage() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Categoría
+                      Categoría *
                     </label>
                     <select
+                      required
                       value={formData.categoriaId}
                       onChange={(e) =>
                         setFormData({
@@ -325,25 +356,11 @@ export default function AdminProductosPage() {
                     >
                       <option value="">Seleccionar categoría</option>
                       {categorias.map((cat) => (
-                        <option key={cat.id} value={cat.id}>
+                        <option key={cat._id || cat.id} value={cat._id || cat.id}>
                           {cat.nombre}
                         </option>
                       ))}
                     </select>
-                  </div>
-
-                  <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={formData.activo}
-                      onChange={(e) =>
-                        setFormData({ ...formData, activo: e.target.checked })
-                      }
-                      className="h-4 w-4 text-blue-600"
-                    />
-                    <label className="ml-2 text-sm text-gray-700">
-                      Producto activo
-                    </label>
                   </div>
 
                   <div className="flex justify-end gap-4 mt-6">

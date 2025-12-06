@@ -11,12 +11,34 @@ class UsuarioService {
 
     const passwordHash = await bcrypt.hash(data.password, 10);
 
-    return await crearUsuario({
+    const usuario = await crearUsuario({
       nombre: data.nombre,
       email: data.email,
       passwordHash,
       rol: data.rol ?? "CLIENTE",
     });
+
+    // Generar token para auto-login después del registro
+    const token = jwt.sign(
+      {
+        id: usuario._id,
+        nombre: usuario.nombre,
+        email: usuario.email,
+        rol: usuario.rol,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    return {
+      token,
+      usuario: {
+        id: usuario._id,
+        nombre: usuario.nombre,
+        email: usuario.email,
+        rol: usuario.rol,
+      },
+    };
   }
 
   async login(data) {
