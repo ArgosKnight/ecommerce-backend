@@ -34,10 +34,8 @@ export default function AdminProductosPage() {
   const cargarProductos = async () => {
     try {
       const { data } = await api.get('/productos');
-      console.log('Respuesta productos admin:', data);
       // La API devuelve un objeto con: { page, limit, total, totalPages, filters, data }
       const productosArray = Array.isArray(data) ? data : (data.data || data.productos || []);
-      console.log('Productos extraídos:', productosArray);
       setProductos(productosArray);
     } catch (error) {
       console.error('Error al cargar productos:', error);
@@ -51,7 +49,7 @@ export default function AdminProductosPage() {
     try {
       const { data } = await api.get('/categorias');
       const categoriasArray = Array.isArray(data) ? data : (data.categorias || []);
-      console.log('Categorías cargadas:', categoriasArray);
+      // ...existing code...
       setCategorias(categoriasArray);
     } catch (error) {
       console.error('Error al cargar categorías:', error);
@@ -77,9 +75,7 @@ export default function AdminProductosPage() {
         imagenes: formData.imagenes,
       };
 
-      console.log('Datos a enviar:', dataToSend);
-      console.log('CategoriaId:', formData.categoriaId);
-      console.log('FormData completo:', formData);
+      // ...existing code...
 
       if (editando) {
         await api.put(`/productos/${editando}`, dataToSend);

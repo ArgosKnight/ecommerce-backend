@@ -22,10 +22,8 @@ export default function ProductosPage() {
   const cargarProductos = async () => {
     try {
       const { data } = await api.get('/productos');
-      console.log('Respuesta productos:', data);
       // La API devuelve un objeto con: { page, limit, total, totalPages, filters, data }
       const productosArray = Array.isArray(data) ? data : (data.data || data.productos || []);
-      console.log('Productos extraídos:', productosArray);
       setProductos(productosArray);
     } catch (error) {
       console.error('Error al cargar productos:', error);
@@ -38,7 +36,7 @@ export default function ProductosPage() {
   const cargarCategorias = async () => {
     try {
       const { data } = await api.get('/categorias');
-      console.log('Respuesta categorías:', data);
+      // ...existing code...
       const categoriasArray = Array.isArray(data) ? data : (data.categorias || []);
       setCategorias(categoriasArray);
     } catch (error) {

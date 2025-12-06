@@ -28,8 +28,6 @@ export default function AdminCategoriasPage() {
     try {
       const { data } = await api.get('/categorias');
       const categoriasArray = Array.isArray(data) ? data : (data.categorias || []);
-      console.log('Categorías cargadas:', categoriasArray);
-      console.log('Primera categoría:', categoriasArray[0]);
       setCategorias(categoriasArray);
     } catch (error) {
       console.error('Error al cargar categorías:', error);
@@ -60,9 +58,7 @@ export default function AdminCategoriasPage() {
   };
 
   const handleEditar = (categoria) => {
-    console.log('Editando categoría:', categoria);
     const categoriaId = categoria._id || categoria.id;
-    console.log('ID de categoría:', categoriaId);
     setEditando(categoriaId);
     setFormData({
       nombre: categoria.nombre,
@@ -74,8 +70,6 @@ export default function AdminCategoriasPage() {
     if (!confirm('¿Estás seguro de eliminar esta categoría?')) return;
     
     const id = categoria._id || categoria.id;
-    console.log('Eliminando categoría:', categoria);
-    console.log('ID para eliminar:', id);
     
     try {
       await api.delete(`/categorias/${id}`);
