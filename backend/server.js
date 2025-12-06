@@ -12,7 +12,8 @@ const app = express();
 app.use(cors({
   origin: [
     'http://localhost:3000',  // Desarrollo local
-    process.env.FRONTEND_URL  // URL de producción (configurar en .env de Render)
+    'https://ecommerce-backend-2kz1jd68o-jesus-code2024s-projects.vercel.app', // Vercel preview
+    process.env.FRONTEND_URL  // URL de producción personalizada (configurar en .env de Render)
   ].filter(Boolean),  // Filtrar valores undefined
   credentials: true
 }));
