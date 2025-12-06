@@ -1,5 +1,6 @@
 const { crearProducto, productoCollection } = require("../../infrastructure/database/producto.collection");
 const { getDB } = require("../../config/mongo");
+const { ObjectId } = require("mongodb");
 
 class ProductoService {
   async crear(data) {
@@ -17,35 +18,57 @@ class ProductoService {
   }
 
   async obtenerPorId(id) {
-    const col = getDB().collection("productos");
-    return await col.findOne({ _id: id });
+    try {
+      const col = getDB().collection("productos");
+      const objectId = ObjectId.isValid(id) ? new ObjectId(id) : id;
+      return await col.findOne({ _id: objectId });
+    } catch (error) {
+      console.error("Error en obtenerPorId:", error);
+      throw error;
+    }
   }
 
   async actualizar(id, data) {
-    const col = getDB().collection("productos");
+    try {
+      const col = getDB().collection("productos");
+      const objectId = ObjectId.isValid(id) ? new ObjectId(id) : id;
+      
+      const resultado = await col.updateOne(
+        { _id: objectId },
+        {
+          $set: {
+            ...data,
+            updatedAt: new Date(),
+          },
+        }
+      );
 
-    await col.updateOne(
-      { _id: id },
-      {
-        $set: {
-          ...data,
-          updatedAt: new Date(),
-        },
+      if (resultado.matchedCount === 0) {
+        throw new Error("Producto no encontrado");
       }
-    );
 
-    return this.obtenerPorId(id);
+      return this.obtenerPorId(id);
+    } catch (error) {
+      console.error("Error en actualizar producto:", error);
+      throw error;
+    }
   }
 
   async cambiarEstado(id, activo) {
-    const col = getDB().collection("productos");
+    try {
+      const col = getDB().collection("productos");
+      const objectId = ObjectId.isValid(id) ? new ObjectId(id) : id;
 
-    await col.updateOne(
-      { _id: id },
-      { $set: { activo, updatedAt: new Date() } }
-    );
+      await col.updateOne(
+        { _id: objectId },
+        { $set: { activo, updatedAt: new Date() } }
+      );
 
-    return this.obtenerPorId(id);
+      return this.obtenerPorId(id);
+    } catch (error) {
+      console.error("Error en cambiarEstado:", error);
+      throw error;
+    }
   }
 
   async obtenerPaginado(queryParams) {
@@ -99,7 +122,22 @@ class ProductoService {
     };
   }
 
-
+  async eliminar(id) {
+    try {
+      const col = getDB().collection("productos");
+      const objectId = ObjectId.isValid(id) ? new ObjectId(id) : id;
+      const resultado = await col.deleteOne({ _id: objectId });
+      
+      if (resultado.deletedCount === 0) {
+        throw new Error("Producto no encontrado");
+      }
+      
+      return { mensaje: "Producto eliminado exitosamente" };
+    } catch (error) {
+      console.error("Error en eliminar:", error);
+      throw error;
+    }
+  }
 
 }
 

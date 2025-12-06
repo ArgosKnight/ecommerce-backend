@@ -2,6 +2,7 @@ const express = require("express");
 const ProductoController = require("../controllers/producto.controller");
 const auth = require("../middleware/auth.middleware");
 const role = require("../middleware/role.middleware");
+const upload = require("../middleware/upload.middleware");
 
 const { crearProductoSchema, actualizarProductoSchema } = require("../validators/producto.validator");
 const validate = require("../middleware/validator.middleware");
@@ -22,7 +23,7 @@ router.post(
   "/", 
   auth, 
   role("ADMIN"),
-  validate(crearProductoSchema), 
+  upload.array("imagenes", 5), // Permitir hasta 5 imágenes
   (req, res) => ProductoController.crear(req, res)
 );
 
@@ -30,7 +31,7 @@ router.put(
   "/:id", 
   auth, 
   role("ADMIN"), 
-  validate(actualizarProductoSchema),
+  upload.array("imagenes", 5), // Permitir hasta 5 imágenes
   (req, res) => ProductoController.actualizar(req, res)
 );
 
@@ -39,6 +40,13 @@ router.patch(
   auth, 
   role("ADMIN"), 
   (req, res) => ProductoController.cambiarEstado(req, res)
+);
+
+router.delete(
+  "/:id",
+  auth,
+  role("ADMIN"),
+  (req, res) => ProductoController.eliminar(req, res)
 );
 
 module.exports = router;

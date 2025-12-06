@@ -20,7 +20,10 @@ export default function ProductCard({ producto }) {
       <div className="relative h-64 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
         {producto.imagenes && producto.imagenes.length > 0 ? (
           <Image
-            src={producto.imagenes[0]}
+            src={producto.imagenes[0].startsWith('http') 
+              ? producto.imagenes[0] 
+              : `${process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:4000'}${producto.imagenes[0]}`
+            }
             alt={producto.nombre}
             fill
             className="object-cover group-hover:scale-110 transition-transform duration-500"

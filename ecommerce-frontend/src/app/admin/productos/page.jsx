@@ -24,6 +24,7 @@ export default function AdminProductosPage() {
     categoriaId: '',
     imagenes: [],
   });
+  const [imagenesNuevas, setImagenesNuevas] = useState([]);
 
   useEffect(() => {
     if (isAuthenticated && user?.rol === 'ADMIN') {
@@ -66,22 +67,32 @@ export default function AdminProductosPage() {
         return;
       }
 
-      const dataToSend = {
-        nombre: formData.nombre,
-        descripcion: formData.descripcion,
-        precio: parseFloat(formData.precio),
-        stock: parseInt(formData.stock),
-        categoriaId: formData.categoriaId,
-        imagenes: formData.imagenes,
-      };
+      // Crear FormData para enviar archivos
+      const formDataToSend = new FormData();
+      formDataToSend.append('nombre', formData.nombre);
+      formDataToSend.append('descripcion', formData.descripcion);
+      formDataToSend.append('precio', parseFloat(formData.precio));
+      formDataToSend.append('stock', parseInt(formData.stock));
+      formDataToSend.append('categoriaId', formData.categoriaId);
 
-      // ...existing code...
+      // Agregar imágenes nuevas
+      imagenesNuevas.forEach((file) => {
+        formDataToSend.append('imagenes', file);
+      });
 
       if (editando) {
-        await api.put(`/productos/${editando}`, dataToSend);
+        await api.put(`/productos/${editando}`, formDataToSend, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
         setNotification({ show: true, message: 'Producto actualizado exitosamente', type: 'success' });
       } else {
-        await api.post('/productos', dataToSend);
+        await api.post('/productos', formDataToSend, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
         setNotification({ show: true, message: 'Producto creado exitosamente', type: 'success' });
       }
 
@@ -98,7 +109,8 @@ export default function AdminProductosPage() {
   };
 
   const handleEditar = (producto) => {
-    setEditando(producto.id);
+    const productoId = producto._id || producto.id;
+    setEditando(productoId);
     setFormData({
       nombre: producto.nombre,
       descripcion: producto.descripcion,
@@ -110,9 +122,27 @@ export default function AdminProductosPage() {
     setShowModal(true);
   };
 
-  const handleCambiarEstado = async (id, activo) => {
+  const handleEliminar = async (producto) => {
+    const productoId = producto._id || producto.id;
+    if (!confirm(`¿Estás seguro de eliminar "${producto.nombre}"?`)) {
+      return;
+    }
+
     try {
-      await api.patch(`/productos/${id}/estado`, { activo: !activo });
+      await api.delete(`/productos/${productoId}`);
+      setNotification({ show: true, message: 'Producto eliminado exitosamente', type: 'success' });
+      cargarProductos();
+      setTimeout(() => setNotification({ show: false, message: '', type: '' }), 3000);
+    } catch (error) {
+      setNotification({ show: true, message: 'Error al eliminar producto', type: 'error' });
+      setTimeout(() => setNotification({ show: false, message: '', type: '' }), 3000);
+    }
+  };
+
+  const handleCambiarEstado = async (producto) => {
+    const productoId = producto._id || producto.id;
+    try {
+      await api.patch(`/productos/${productoId}/estado`, { activo: !producto.activo });
       setNotification({ show: true, message: 'Estado actualizado', type: 'success' });
       cargarProductos();
       setTimeout(() => setNotification({ show: false, message: '', type: '' }), 3000);
@@ -131,6 +161,12 @@ export default function AdminProductosPage() {
       categoriaId: '',
       imagenes: [],
     });
+    setImagenesNuevas([]);
+  };
+
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    setImagenesNuevas(files);
   };
 
   if (!isAuthenticated || user?.rol !== 'ADMIN') {
@@ -266,12 +302,16 @@ export default function AdminProductosPage() {
                           Editar
                         </button>
                         <button
-                          onClick={() =>
-                            handleCambiarEstado(producto.id, producto.activo)
-                          }
+                          onClick={() => handleCambiarEstado(producto)}
                           className="text-purple-600 hover:text-purple-900"
                         >
                           {producto.activo ? 'Desactivar' : 'Activar'}
+                        </button>
+                        <button
+                          onClick={() => handleEliminar(producto)}
+                          className="text-red-600 hover:text-red-900"
+                        >
+                          Eliminar
                         </button>
                       </td>
                     </tr>
@@ -382,6 +422,48 @@ export default function AdminProductosPage() {
                         </option>
                       ))}
                     </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Imágenes del Producto
+                    </label>
+                    
+                    {/* Mostrar imágenes existentes si estamos editando */}
+                    {editando && formData.imagenes && formData.imagenes.length > 0 && (
+                      <div className="mb-3">
+                        <p className="text-sm text-gray-600 mb-2">Imágenes actuales:</p>
+                        <div className="flex gap-2 flex-wrap">
+                          {formData.imagenes.map((img, index) => (
+                            <div key={index} className="relative w-20 h-20">
+                              <img
+                                src={img.startsWith('http') ? img : `${process.env.NEXT_PUBLIC_API_URL}${img}`}
+                                alt={`Imagen ${index + 1}`}
+                                className="w-full h-full object-cover rounded border"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    <input
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {editando 
+                        ? 'Selecciona nuevas imágenes para reemplazar las actuales (opcional)'
+                        : 'Puedes seleccionar hasta 5 imágenes'}
+                    </p>
+                    {imagenesNuevas.length > 0 && (
+                      <p className="text-sm text-green-600 mt-1">
+                        ✓ {imagenesNuevas.length} archivo(s) seleccionado(s)
+                      </p>
+                    )}
                   </div>
 
                   <div className="flex justify-end gap-4 mt-6">

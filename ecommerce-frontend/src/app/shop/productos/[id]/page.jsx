@@ -73,7 +73,10 @@ export default function ProductoDetallePage() {
               <div className="relative h-96 bg-gray-200 rounded-lg">
                 {producto.imagenes && producto.imagenes.length > 0 ? (
                   <Image
-                    src={producto.imagenes[0]}
+                    src={producto.imagenes[0].startsWith('http') 
+                      ? producto.imagenes[0] 
+                      : `${process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:4000'}${producto.imagenes[0]}`
+                    }
                     alt={producto.nombre}
                     fill
                     className="object-cover rounded-lg"
