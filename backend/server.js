@@ -9,12 +9,15 @@ const apiRoutes = require("./src/application/routes/index.routes");
 const app = express();
 
 // Configurar CORS para desarrollo y producción
+const cors = require('cors');
+
 app.use(cors({
   origin: [
-    'http://localhost:3000',  // Desarrollo local
-    'https://ecommerce-backend-2kz1jd68o-jesus-code2024s-projects.vercel.app', // Vercel preview
-    process.env.FRONTEND_URL  // URL de producción personalizada (configurar en .env de Render)
-  ].filter(Boolean),  // Filtrar valores undefined
+    'http://localhost:3000',
+    'https://ecommerce-frontend-kappa.vercel.app',
+    'https://ecommerce-frontend-jesus-code2024s-projects.vercel.app',
+     'https://ecommerce-frontend-eight-opal.vercel.app/'
+  ],
   credentials: true
 }));
 
