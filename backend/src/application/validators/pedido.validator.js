@@ -1,6 +1,15 @@
 const Joi = require("joi");
 
 const pedidoSchema = Joi.object({
+  items: Joi.array()
+    .items(
+      Joi.object({
+        productoId: Joi.string().required(),
+        cantidad: Joi.number().integer().min(1).required(),
+        precio: Joi.number().positive().required(),
+      })
+    )
+    .optional(),
   direccionEnvio: Joi.object({
     direccion: Joi.string().required(),
     ciudad: Joi.string().required(),
@@ -10,4 +19,10 @@ const pedidoSchema = Joi.object({
   }).required(),
 });
 
-module.exports = { pedidoSchema };
+const cambiarEstadoSchema = Joi.object({
+  estado: Joi.string()
+    .valid("PENDIENTE", "EN_PROCESO", "ENVIADO", "ENTREGADO", "CANCELADO")
+    .required(),
+});
+
+module.exports = { pedidoSchema, cambiarEstadoSchema };

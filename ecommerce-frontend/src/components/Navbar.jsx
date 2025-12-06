@@ -57,6 +57,16 @@ export default function Navbar() {
                   >
                     Admin Categorías
                   </Link>
+                  <Link
+                    href="/admin/pedidos"
+                    className={`px-3 py-2 rounded-md text-sm font-medium ${
+                      pathname === '/admin/pedidos'
+                        ? 'bg-purple-100 text-purple-700'
+                        : 'text-gray-900 hover:bg-gray-100'
+                    }`}
+                  >
+                    Admin Pedidos
+                  </Link>
                 </>
               )}
             </div>

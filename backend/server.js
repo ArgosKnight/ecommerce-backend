@@ -8,7 +8,15 @@ const apiRoutes = require("./src/application/routes/index.routes");
 
 const app = express();
 
-app.use(cors());
+// Configurar CORS para desarrollo y producción
+app.use(cors({
+  origin: [
+    'http://localhost:3000',  // Desarrollo local
+    process.env.FRONTEND_URL  // URL de producción (configurar en .env de Render)
+  ].filter(Boolean),  // Filtrar valores undefined
+  credentials: true
+}));
+
 app.use(express.json());
 
 // Conectar DB

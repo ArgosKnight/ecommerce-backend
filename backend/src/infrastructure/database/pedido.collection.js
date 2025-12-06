@@ -1,4 +1,5 @@
 const { getDB } = require("../../config/mongo");
+const { ObjectId } = require("mongodb");
 
 function pedidoCollection() {
   return getDB().collection("pedidos");
@@ -28,12 +29,18 @@ async function obtenerPedidosPorUsuario(usuarioId) {
   return await col.find({ usuarioId }).toArray();
 }
 
+// Obtener todos los pedidos (ADMIN)
+async function obtenerTodosPedidos() {
+  const col = pedidoCollection();
+  return await col.find({}).sort({ createdAt: -1 }).toArray();
+}
+
 // Cambiar estado del pedido
 async function actualizarEstado(id, nuevoEstado) {
   const col = pedidoCollection();
 
-  await col.updateOne(
-    { _id: id },
+  const result = await col.updateOne(
+    { _id: new ObjectId(id) },
     {
       $set: {
         estado: nuevoEstado,
@@ -41,10 +48,14 @@ async function actualizarEstado(id, nuevoEstado) {
       },
     }
   );
+  
+  console.log('🔄 Actualización de estado:', { id, nuevoEstado, modificados: result.modifiedCount });
+  return result;
 }
 
 module.exports = {
   crearPedido,
   obtenerPedidosPorUsuario,
+  obtenerTodosPedidos,
   actualizarEstado
 };

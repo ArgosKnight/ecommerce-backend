@@ -5,7 +5,7 @@ const auth = require("../middleware/auth.middleware");
 const role = require("../middleware/role.middleware");
 
 const validate = require("../middleware/validator.middleware");
-const { pedidoSchema } = require("../validators/pedido.validator");
+const { pedidoSchema, cambiarEstadoSchema } = require("../validators/pedido.validator");
 
 // ✅ Primero se crea el router
 const router = express.Router();
@@ -32,12 +32,23 @@ router.get(
 );
 
 // -------------------------------------------------
+// 📌 ADMIN - Ver todos los pedidos
+// -------------------------------------------------
+router.get(
+  "/",
+  auth,
+  role("ADMIN"),
+  (req, res) => PedidoController.obtenerTodos(req, res)
+);
+
+// -------------------------------------------------
 // 📌 ADMIN - Cambiar estado
 // -------------------------------------------------
 router.patch(
   "/:id/estado",
   auth,
   role("ADMIN"),
+  validate(cambiarEstadoSchema),
   (req, res) => PedidoController.cambiarEstado(req, res)
 );
 

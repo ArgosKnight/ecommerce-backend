@@ -88,13 +88,13 @@ export default function MisPedidosPage() {
             <div className="space-y-4">
               {pedidos.map((pedido) => (
                 <div
-                  key={pedido.id}
+                  key={pedido._id || pedido.id}
                   className="bg-white rounded-lg shadow-md p-6"
                 >
                   <div className="flex justify-between items-start mb-4">
                     <div>
                       <p className="text-sm text-gray-500">
-                        Pedido #{pedido.id}
+                        Pedido #{pedido._id || pedido.id}
                       </p>
                       <p className="text-sm text-gray-500">
                         {new Date(pedido.fecha).toLocaleDateString('es-PE', {
@@ -118,17 +118,17 @@ export default function MisPedidosPage() {
                       Productos
                     </h3>
                     <div className="space-y-2">
-                      {pedido.items.map((item, index) => (
+                      {pedido.items?.map((item, index) => (
                         <div
                           key={index}
                           className="flex justify-between text-sm"
                         >
                           <span className="text-gray-600">
-                            {item.cantidad}x Producto (S/{' '}
-                            {item.precio.toFixed(2)})
+                            {item.cantidad || 0}x Producto (S/{' '}
+                            {(item.precio || item.precioUnitario || 0).toFixed(2)})
                           </span>
                           <span className="font-medium">
-                            S/ {(item.cantidad * item.precio).toFixed(2)}
+                            S/ {((item.cantidad || 0) * (item.precio || item.precioUnitario || 0)).toFixed(2)}
                           </span>
                         </div>
                       ))}
@@ -140,13 +140,13 @@ export default function MisPedidosPage() {
                       <div>
                         <p className="text-sm text-gray-600">
                           <span className="font-semibold">Dirección:</span>{' '}
-                          {pedido.direccionEnvio.calle},{' '}
-                          {pedido.direccionEnvio.ciudad}
+                          {pedido.direccionEnvio?.direccion || pedido.direccionEnvio?.calle || 'N/A'},{' '}
+                          {pedido.direccionEnvio?.ciudad || 'N/A'}
                         </p>
                       </div>
                       <div className="text-right">
                         <p className="text-2xl font-bold text-gray-900">
-                          S/ {pedido.total.toFixed(2)}
+                          S/ {(pedido.total || 0).toFixed(2)}
                         </p>
                       </div>
                     </div>
